@@ -164,6 +164,12 @@ document.addEventListener('DOMContentLoaded', () => {
               video.addEventListener('ended', () => {
                 video.classList.remove('fullscreen');
                 
+                // Hide all page elements except end sequence
+                const page = document.querySelector('.page');
+                if (page) {
+                  page.style.display = 'none';
+                }
+                
                 // Start end sequence
                 const endSequence = document.getElementById('endSequence');
                 const arenaImage = document.getElementById('arenaImage');
@@ -174,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (endSequence) {
                   endSequence.setAttribute('aria-hidden', 'false');
                   
-                  // Show black screen immediately
+                  // Show grey background immediately
                   if (blackScreen) {
                     blackScreen.classList.add('active');
                   }
@@ -231,58 +237,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                   }, 10300);
                   
-                  // Fade everything to black after logos show
-                  animationBuffer.add(() => {
-                    if (blackScreen) {
-                      blackScreen.style.transition = 'opacity 800ms ease';
-                      blackScreen.style.opacity = '1';
-                    }
-                    if (logosContainer) {
-                      logosContainer.style.opacity = '0';
-                      logosContainer.style.transition = 'opacity 800ms ease';
-                    }
-                  }, 15300);
-                  
-                  // After fade, reset and show details
-                  animationBuffer.add(() => {
-                    endSequence.setAttribute('aria-hidden', 'true');
-                    endSequence.style.opacity = '0';
-                    endSequence.style.pointerEvents = 'none';
-                    if (arenaImage) arenaImage.style.opacity = '0';
-                    if (stayTunedText) stayTunedText.style.opacity = '0';
-                    if (blackScreen) blackScreen.classList.remove('active');
-                    if (logosContainer) logosContainer.style.opacity = '0';
-                    
-                    // Show scroll arrow
-                    if (scrollArrow) {
-                      animationBuffer.add(() => scrollArrow.classList.add('show'), 200);
-                    }
-                    
-                    // Scroll to details
-                    const arrowVisibleDelay = 1200;
-                    animationBuffer.add(() => {
-                      if (details) {
-                        details.setAttribute("aria-hidden", "false");
-                        const top = details.getBoundingClientRect().top + window.pageYOffset - 24;
-                        window.scrollTo({ top, behavior: "smooth" });
-
-                        animationBuffer.add(() => {
-                          revealItems.forEach((el, i) => {
-                            animationBuffer.add(() => el.classList.add("visible"), i * 120);
-                          });
-
-                          const qrCollection = document.getElementById('qrCollection');
-                          if (qrCollection) {
-                            qrCollection.setAttribute('aria-hidden', 'false');
-                            const cards = Array.from(qrCollection.querySelectorAll('.qr-card'));
-                            cards.forEach((card, idx) => {
-                              animationBuffer.add(() => card.classList.add('visible'), 600 + idx * 160);
-                            });
-                          }
-                        }, 700);
-                      }
-                    }, arrowVisibleDelay);
-                  }, 16300);
+                  // Logos stay visible on grey background - no fade to black after
+                  // Music continues playing in the background
                 }
               });
             }

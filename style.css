@@ -638,6 +638,7 @@ h1,h2,h3,.card__title {
 
 .black-screen.active {
   opacity: 1;
+  transition: opacity 1000ms ease;
 }
 
 .logos-container {
