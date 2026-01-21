@@ -7,6 +7,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const scrollArrow = document.getElementById('scrollArrow');
 
   const introText = document.getElementById('introText');
+  
+  // iOS audio fix - enable audio on first user interaction
+  const enableAudioOnIOS = () => {
+    if (audio && audio.paused) {
+      audio.volume = 0;
+      audio.play().catch(() => {});
+    }
+    document.removeEventListener('touchstart', enableAudioOnIOS);
+  };
+  
+  document.addEventListener('touchstart', enableAudioOnIOS);
 
   // Buffer system to prevent lag
   const animationBuffer = {
@@ -156,43 +167,49 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Start end sequence
                 const endSequence = document.getElementById('endSequence');
                 const arenaImage = document.getElementById('arenaImage');
-                const stayTunedImage = document.getElementById('stayTunedImage');
+                const stayTunedText = document.getElementById('stayTunedText');
                 const blackScreen = document.getElementById('blackScreen');
                 const logosContainer = document.getElementById('logosContainer');
                 
                 if (endSequence) {
                   endSequence.setAttribute('aria-hidden', 'false');
                   
-                  // Show Arena image
+                  // Show black screen immediately
+                  if (blackScreen) {
+                    blackScreen.classList.add('active');
+                  }
+                  
+                  // Slowly fade in Arena image after 500ms
                   animationBuffer.add(() => {
                     if (arenaImage) {
                       arenaImage.style.opacity = '1';
-                      arenaImage.style.transition = 'opacity 800ms ease';
+                      arenaImage.style.transition = 'opacity 1500ms ease-in-out';
                     }
                   }, 500);
                   
-                  // Show Stay Tuned image after 3 seconds
+                  // Slowly fade out Arena image after 4 seconds
                   animationBuffer.add(() => {
-                    if (stayTunedImage) {
-                      stayTunedImage.style.opacity = '1';
-                      stayTunedImage.style.transition = 'opacity 800ms ease';
-                    }
-                  }, 3500);
-                  
-                  // Fade out Stay Tuned and show black screen after 3 more seconds
-                  animationBuffer.add(() => {
-                    if (stayTunedImage) {
-                      stayTunedImage.style.opacity = '0';
-                      stayTunedImage.style.transition = 'opacity 600ms ease';
-                    }
                     if (arenaImage) {
                       arenaImage.style.opacity = '0';
-                      arenaImage.style.transition = 'opacity 600ms ease';
+                      arenaImage.style.transition = 'opacity 1500ms ease-in-out';
                     }
-                    if (blackScreen) {
-                      blackScreen.classList.add('active');
+                  }, 4500);
+                  
+                  // Show Stay Tuned text with fade-in after Arena fades out
+                  animationBuffer.add(() => {
+                    if (stayTunedText) {
+                      stayTunedText.style.opacity = '1';
+                      stayTunedText.style.transition = 'opacity 1200ms ease-in-out';
                     }
-                  }, 6500);
+                  }, 6200);
+                  
+                  // Fade out Stay Tuned text after 3 seconds
+                  animationBuffer.add(() => {
+                    if (stayTunedText) {
+                      stayTunedText.style.opacity = '0';
+                      stayTunedText.style.transition = 'opacity 1000ms ease-in-out';
+                    }
+                  }, 9200);
                   
                   // Show logos and play background music at 30% volume
                   animationBuffer.add(() => {
@@ -200,26 +217,39 @@ document.addEventListener('DOMContentLoaded', () => {
                       logosContainer.style.opacity = '1';
                     }
                     
-                    // Play audio at 30% volume
+                    // Play audio at 30% volume with user gesture fallback for iOS
                     if (audio) {
                       audio.currentTime = 0;
                       audio.volume = 0.3;
-                      audio.play().catch(() => {});
+                      const playPromise = audio.play();
+                      if (playPromise !== undefined) {
+                        playPromise.catch(error => {
+                          console.log('Audio autoplay failed:', error);
+                          // User interaction required on iOS
+                        });
+                      }
                     }
-                  }, 7200);
+                  }, 10300);
                   
-                  // After logos show for 5 seconds, fade everything to black
+                  // Fade everything to black after logos show
                   animationBuffer.add(() => {
-                    endSequence.style.opacity = '0';
-                    endSequence.style.transition = 'opacity 1000ms ease';
-                    endSequence.style.pointerEvents = 'none';
-                  }, 12200);
+                    if (blackScreen) {
+                      blackScreen.style.transition = 'opacity 800ms ease';
+                      blackScreen.style.opacity = '1';
+                    }
+                    if (logosContainer) {
+                      logosContainer.style.opacity = '0';
+                      logosContainer.style.transition = 'opacity 800ms ease';
+                    }
+                  }, 15300);
                   
                   // After fade, reset and show details
                   animationBuffer.add(() => {
                     endSequence.setAttribute('aria-hidden', 'true');
+                    endSequence.style.opacity = '0';
+                    endSequence.style.pointerEvents = 'none';
                     if (arenaImage) arenaImage.style.opacity = '0';
-                    if (stayTunedImage) stayTunedImage.style.opacity = '0';
+                    if (stayTunedText) stayTunedText.style.opacity = '0';
                     if (blackScreen) blackScreen.classList.remove('active');
                     if (logosContainer) logosContainer.style.opacity = '0';
                     
@@ -252,7 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         }, 700);
                       }
                     }, arrowVisibleDelay);
-                  }, 13200);
+                  }, 16300);
                 }
               });
             }

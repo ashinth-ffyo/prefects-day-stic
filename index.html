@@ -7,6 +7,7 @@
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/game-of-squids" rel="stylesheet">
 
   <!-- add Bootstrap for nicer components -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -46,10 +47,10 @@
     </header>
 
     <!-- Audio (kept consistent with your file) -->
-    <audio id="bg-audio" src="Squid Game - Intro motion logo - English version.mp3" preload="auto"></audio>
+    <audio id="bg-audio" src="Squid Game - Intro motion logo - English version.mp3" preload="auto" webkit-playsinline playsinline></audio>
 
     <!-- Video (initially hidden, shown full screen after logo) -->
-    <video id="eventVideo" class="event-video" preload="auto" playsinline>
+    <video id="eventVideo" class="event-video" preload="auto" playsinline webkit-playsinline>
       <source src="https://2oozsdtkga.ucarecd.net/bc5c7176-4b5c-4e1c-bee4-044cc8943873/THEARENA26invitation.mp4" type="video/mp4">
       Your browser does not support the video tag.
     </video>
@@ -59,8 +60,10 @@
       <!-- Arena Image -->
       <img id="arenaImage" src="THE ARENA'26.png" alt="The Arena 26" class="end-image arena-image" />
       
-      <!-- Stay Tuned Image -->
-      <img id="stayTunedImage" src="stay tuned.png" alt="Stay Tuned" class="end-image stay-tuned-image" />
+      <!-- Stay Tuned Text -->
+      <div id="stayTunedText" class="stay-tuned-text">
+        <h2>STAY TUNED</h2>
+      </div>
       
       <!-- Black Screen -->
       <div id="blackScreen" class="black-screen"></div>
