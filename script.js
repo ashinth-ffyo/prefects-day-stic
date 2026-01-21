@@ -108,16 +108,46 @@ document.addEventListener('DOMContentLoaded', () => {
             }, stepTime);
           }
 
-          // Play the video full screen after fade
+          // Play the video full screen after fade with buffer check
           animationBuffer.add(() => {
             const video = document.getElementById('eventVideo');
             if (video) {
               video.classList.add('fullscreen');
-              // Preload video before playing
-              video.load();
-              setTimeout(() => {
-                video.play().catch(() => {});
-              }, 100);
+              
+              // Buffer the video to prevent lag
+              const bufferVideo = () => {
+                // Pre-load the video
+                video.load();
+                
+                // Wait for video to be ready to play
+                const onCanPlay = () => {
+                  video.removeEventListener('canplay', onCanPlay);
+                  video.removeEventListener('error', onError);
+                  // Buffer more data before playing
+                  if (video.buffered.length > 0) {
+                    video.play().catch(() => {});
+                  }
+                };
+                
+                const onError = () => {
+                  video.removeEventListener('canplay', onCanPlay);
+                  video.removeEventListener('error', onError);
+                  // Retry after error
+                  setTimeout(() => bufferVideo(), 1000);
+                };
+                
+                video.addEventListener('canplay', onCanPlay, { once: true });
+                video.addEventListener('error', onError, { once: true });
+                
+                // Timeout failsafe - play anyway after 3 seconds
+                setTimeout(() => {
+                  video.removeEventListener('canplay', onCanPlay);
+                  video.removeEventListener('error', onError);
+                  video.play().catch(() => {});
+                }, 3000);
+              };
+              
+              bufferVideo();
 
               // After video ends, scroll down and reveal details
               video.addEventListener('ended', () => {
