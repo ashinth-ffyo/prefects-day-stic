@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>STIC — Prefects' Day 2026 | Official Invitation</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <!-- add Bootstrap for nicer components -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="page">
+
+    <!-- Hero Section -->
+    <header class="hero">
+
+      <div class="hero__backdrop"></div>
+
+      <div class="hero__content">
+        <!-- Intro lines: shown after the user clicks the button, then fade away -->
+        <div id="introText" class="intro-text" aria-hidden="true">
+          <h1 class="intro-line">The prefects board of STIC 2025/26</h1>
+          <h1 class="intro-line">Presents</h1>
+        </div>
+
+        <img src="logo.png" class="logo" alt="Theme" />
+
+        <!-- updated button: uses Bootstrap styling and remains centered -->
+        <button id="playBtn" class="btn btn-lg btn-warning">Click to Begin</button>
+
+        <!-- scroll arrow (hidden initially; shown after animation) -->
+        <div id="scrollArrow" class="scroll-arrow" aria-hidden="true" tabindex="-1">
+          <!-- simple chevron SVG -->
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M6 9l6 6 6-6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+
+    </header>
+
+    <!-- Audio (kept consistent with your file) -->
+    <audio id="bg-audio" src="Squid Game - Intro motion logo - English version.mp3" preload="auto"></audio>
+
+    <!-- Video (initially hidden, shown full screen after logo) -->
+    <video id="eventVideo" class="event-video">
+      <source src="THE ARENA '26 (invitation).mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+
+    <!-- Event Details (hidden until animation finishes) -->
+    <main id="details" class="details" aria-hidden="true">
+    </main>
+
+    <footer class="site-footer">
+      © STIC Prefects Board — 2025/26
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
