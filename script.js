@@ -8,17 +8,55 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const introText = document.getElementById('introText');
 
+  // Buffer system to prevent lag
+  const animationBuffer = {
+    queue: [],
+    isProcessing: false,
+    
+    add(callback, delay = 0) {
+      this.queue.push({ callback, delay, startTime: Date.now() });
+      this.process();
+    },
+    
+    process() {
+      if (this.isProcessing || this.queue.length === 0) return;
+      
+      this.isProcessing = true;
+      requestAnimationFrame(() => {
+        const now = Date.now();
+        const ready = this.queue.filter(item => now - item.startTime >= item.delay);
+        
+        ready.forEach(item => {
+          try {
+            item.callback();
+          } catch (e) {
+            console.error('Animation buffer error:', e);
+          }
+        });
+        
+        this.queue = this.queue.filter(item => now - item.startTime < item.delay);
+        this.isProcessing = false;
+        
+        if (this.queue.length > 0) {
+          requestAnimationFrame(() => this.process());
+        }
+      });
+    }
+  };
+
   // When "Click to Begin" is pressed
   function beginExperience() {
     // animate button fade then hide
     playBtn.disabled = true;
     playBtn.classList.add('fade-out');
-    setTimeout(() => playBtn.style.display = 'none', 440);
+    animationBuffer.add(() => playBtn.style.display = 'none', 440);
 
     // Start audio
     if (audio) {
-      audio.currentTime = 0;
-      audio.play().catch(() => {});
+      animationBuffer.add(() => {
+        audio.currentTime = 0;
+        audio.play().catch(() => {});
+      }, 0);
     }
 
     // Show intro lines briefly
@@ -30,20 +68,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // after ~1s, fade intro lines out (then start logo animation)
     const introVisibleMs = 2000;
     const introFadeMs = 900; // matches CSS fade duration
-    setTimeout(() => {
+    animationBuffer.add(() => {
       if (introText) {
         introText.classList.remove('show');
         introText.classList.add('fade');
       }
 
       // after fade completes, remove intro and start logo animation
-      setTimeout(() => {
+      animationBuffer.add(() => {
         if (introText) {
           introText.style.display = 'none';
           introText.setAttribute('aria-hidden', 'true');
         }
 
-        // Logo animation (5s)
+        // Logo animation (5s) - using requestAnimationFrame for smooth performance
         const anim = logo.animate([
           { opacity: 0, transform: "translateY(20px) scale(0.85)" },
           { opacity: 1, transform: "translateY(0) scale(1)" }
@@ -54,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         anim.onfinish = () => {
-          // Fade out audio before playing video
+          // Fade out audio before playing video using RAF
           if (audio) {
             const fadeDuration = 2000; // 2 seconds
             const steps = 20;
@@ -71,30 +109,34 @@ document.addEventListener('DOMContentLoaded', () => {
           }
 
           // Play the video full screen after fade
-          setTimeout(() => {
+          animationBuffer.add(() => {
             const video = document.getElementById('eventVideo');
             if (video) {
               video.classList.add('fullscreen');
-              video.play().catch(() => {});
+              // Preload video before playing
+              video.load();
+              setTimeout(() => {
+                video.play().catch(() => {});
+              }, 100);
 
               // After video ends, scroll down and reveal details
               video.addEventListener('ended', () => {
                 video.classList.remove('fullscreen');
                 // Show scroll arrow
                 if (scrollArrow) {
-                  setTimeout(() => scrollArrow.classList.add('show'), 200);
+                  animationBuffer.add(() => scrollArrow.classList.add('show'), 200);
                 }
                 // Scroll to details
                 const arrowVisibleDelay = 1200;
-                setTimeout(() => {
+                animationBuffer.add(() => {
                   if (details) {
                     details.setAttribute("aria-hidden", "false");
                     const top = details.getBoundingClientRect().top + window.pageYOffset - 24;
                     window.scrollTo({ top, behavior: "smooth" });
 
-                    setTimeout(() => {
+                    animationBuffer.add(() => {
                       revealItems.forEach((el, i) => {
-                        setTimeout(() => el.classList.add("visible"), i * 120);
+                        animationBuffer.add(() => el.classList.add("visible"), i * 120);
                       });
 
                       const qrCollection = document.getElementById('qrCollection');
@@ -102,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         qrCollection.setAttribute('aria-hidden', 'false');
                         const cards = Array.from(qrCollection.querySelectorAll('.qr-card'));
                         cards.forEach((card, idx) => {
-                          setTimeout(() => card.classList.add('visible'), 600 + idx * 160);
+                          animationBuffer.add(() => card.classList.add('visible'), 600 + idx * 160);
                         });
                       }
                     }, 700);
