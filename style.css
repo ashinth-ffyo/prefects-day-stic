@@ -18,7 +18,14 @@ html,body{
 }
 a{color:inherit; text-decoration:none}
 
-.page{display:flex; flex-direction:column; align-items:center}
+.page{
+  display:flex; 
+  flex-direction:column; 
+  align-items:center;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
 p{
     font-size:16px;
 }
@@ -57,10 +64,13 @@ h3{
 
 .logo{
   width: 600px;
+  height: auto;
+  max-width: 85vw;
   opacity:0;
   transform:translateY(20px) scale(0.85);
   will-change:opacity, transform;
   transition: opacity 5000ms var(--ease), transform 5000ms var(--ease);
+  display: block;
 }
 
 /* Button */
@@ -104,6 +114,7 @@ h3{
 }
 
 .card{
+  overflow-x: hidden;
   background:rgba(255,255,255,0.03);
   border:1px solid rgba(255,255,255,0.05);
   border-radius:18px;
@@ -246,11 +257,168 @@ h1,h2,h3,.card__title {
   }
 }
 
-/* Mobile */
+/* Tablet & Mobile */
 @media(max-width:780px){
-  .logo{width:200px}
+  html, body {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+  
+  .page {
+    width: 100%;
+    max-width: 100vw;
+  }
+  
+  .logo{
+    width: 100%;
+    height: auto;
+    max-width: 320px;
+  }
   .grid{grid-template-columns:1fr}
   .btn{font-size:17px; padding:14px 22px}
+  
+  #playBtn {
+    padding: 12px 20px;
+    font-size: 16px;
+    min-width: auto;
+    width: 90%;
+    max-width: 280px;
+  }
+  
+  .hero__content {
+    gap: 15px;
+    padding: 20px;
+    width: 100%;
+  }
+  
+  .intro-text .intro-line {
+    font-size: 22px;
+  }
+  
+  .details {
+    padding: 40px 16px;
+    width: 100%;
+  }
+  
+  .card {
+    padding: 20px;
+    width: 100%;
+    margin: 0 auto;
+  }
+  
+  .qr-collection {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+    width: 100%;
+    padding: 0 16px;
+  }
+  
+  .qr-card {
+    width: 140px;
+  }
+  
+  .qr-card img {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+/* Small Mobile */
+@media(max-width:480px){
+  html, body {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+  
+  .page {
+    width: 100%;
+    max-width: 100vw;
+  }
+  
+  .logo{
+    height: auto;
+    max-width: 22
+    max-width: 180px;
+  }
+  
+  #playBtn {
+    padding: 11px 18px;
+    font-size: 15px;
+    min-width: auto;
+    width: 85%;
+    max-width: 200px;
+  }
+  
+  .intro-text .intro-line {
+    font-size: 20px;
+  }
+  
+  .card__title {
+    font-size: 20px;
+  }
+  
+  .card {
+    padding: 16px;
+    width: 100%;
+    margin: 0 auto;
+  }
+  
+  .details {
+    padding: 30px 12px;
+    width: 100%;
+  }
+  
+  .grid {
+    gap: 16px;
+  }
+  
+  .grid h3 {
+    font-size: 15px;
+  }
+  
+  .grid p {
+    font-size: 14px;
+  }
+  
+  .qr-collection {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    width: 100%;
+    padding: 0 12px;
+  }
+  
+  .qr-card {
+    width: 120px;
+    padding: 10px;
+  }
+  
+  .qr-card img {
+    width: 90px;
+    height: 90px;
+  }
+  
+  .qr-card p {
+    font-size: 13px;
+  }
+  
+  .site-footer {
+    font-size: 12px;
+    padding: 15px;
+  }
+  
+  h1, h2, h3 {
+    margin: 0;
+  }
+  
+  p {
+    font-size: 15px;
+  }
+  
+  .hero {
+    padding: 16px;
+  }
 }
 
 /* QR Collection */
@@ -372,16 +540,21 @@ h1,h2,h3,.card__title {
   opacity: 0;
   transform: scale(0.5);
   transition: opacity 1s ease, transform 1s ease;
-  object-fit: cover;
+  object-fit: contain;
+  display: block;
 }
 
 .event-video.fullscreen {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
+  max-width: 100vw;
+  max-height: 100vh;
   z-index: 1000;
   opacity: 1;
   transform: scale(1);
+  object-fit: contain;
+  background: #000;
 }
