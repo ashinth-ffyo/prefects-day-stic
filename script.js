@@ -125,6 +125,17 @@ document.addEventListener('DOMContentLoaded', () => {
             if (video) {
               video.classList.add('fullscreen');
               
+              // Try fullscreen API for better experience
+              if (video.requestFullscreen) {
+                video.requestFullscreen().catch(() => {});
+              } else if (video.webkitRequestFullscreen) {
+                video.webkitRequestFullscreen();
+              } else if (video.mozRequestFullScreen) {
+                video.mozRequestFullScreen();
+              } else if (video.msRequestFullscreen) {
+                video.msRequestFullscreen();
+              }
+              
               // Buffer the video to prevent lag
               const bufferVideo = () => {
                 // Pre-load the video
@@ -162,12 +173,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
               // After video ends, show end sequence
               video.addEventListener('ended', () => {
+                console.log('Video ended, starting end sequence');
                 video.classList.remove('fullscreen');
                 
-                // Hide all page elements except end sequence
-                const page = document.querySelector('.page');
-                if (page) {
-                  page.style.display = 'none';
+                // Exit fullscreen if active
+                if (document.fullscreenElement) {
+                  document.exitFullscreen().catch(() => {});
+                } else if (document.webkitFullscreenElement) {
+                  document.webkitExitFullscreen();
+                }
+                
+                // Hide all page elements except end sequence and footer
+                const hero = document.querySelector('.hero');
+                const details = document.getElementById('details');
+                
+                if (hero) {
+                  hero.style.visibility = 'hidden';
+                }
+                if (details) {
+                  details.style.visibility = 'hidden';
                 }
                 
                 // Start end sequence
