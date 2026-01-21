@@ -558,3 +558,146 @@ h1,h2,h3,.card__title {
   object-fit: contain;
   background: #000;
 }
+
+/* End Sequence Styles */
+.end-sequence {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.end-sequence[aria-hidden="false"] {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.end-image {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  opacity: 0;
+  z-index: 1002;
+}
+
+.arena-image {
+  width: 100%;
+  max-width: 600px;
+}
+
+.stay-tuned-image {
+  width: 100%;
+  max-width: 600px;
+}
+
+.black-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  z-index: 1003;
+  opacity: 0;
+  transition: opacity 600ms ease;
+}
+
+.black-screen.active {
+  opacity: 1;
+}
+
+.logos-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  gap: 40px;
+  align-items: center;
+  justify-content: center;
+  z-index: 1004;
+  opacity: 0;
+  flex-wrap: wrap;
+}
+
+.end-logo {
+  max-width: 200px;
+  max-height: 200px;
+  object-fit: contain;
+  opacity: 0;
+  animation: logoFadeIn 800ms ease forwards;
+}
+
+.stic-logo {
+  animation-delay: 200ms;
+}
+
+.partner-logo {
+  animation-delay: 400ms;
+}
+
+@keyframes logoFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Mobile responsive end sequence */
+@media(max-width:780px) {
+  .end-image {
+    max-width: 85vw;
+    max-height: 70vh;
+  }
+  
+  .arena-image,
+  .stay-tuned-image {
+    max-width: 85vw;
+  }
+  
+  .logos-container {
+    gap: 30px;
+  }
+  
+  .end-logo {
+    max-width: 150px;
+    max-height: 150px;
+  }
+}
+
+@media(max-width:480px) {
+  .end-image {
+    max-width: 90vw;
+    max-height: 60vh;
+  }
+  
+  .arena-image,
+  .stay-tuned-image {
+    max-width: 90vw;
+  }
+  
+  .logos-container {
+    gap: 20px;
+  }
+  
+  .end-logo {
+    max-width: 120px;
+    max-height: 120px;
+  }
+}

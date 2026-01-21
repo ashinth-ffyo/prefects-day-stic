@@ -149,37 +149,111 @@ document.addEventListener('DOMContentLoaded', () => {
               
               bufferVideo();
 
-              // After video ends, scroll down and reveal details
+              // After video ends, show end sequence
               video.addEventListener('ended', () => {
                 video.classList.remove('fullscreen');
-                // Show scroll arrow
-                if (scrollArrow) {
-                  animationBuffer.add(() => scrollArrow.classList.add('show'), 200);
-                }
-                // Scroll to details
-                const arrowVisibleDelay = 1200;
-                animationBuffer.add(() => {
-                  if (details) {
-                    details.setAttribute("aria-hidden", "false");
-                    const top = details.getBoundingClientRect().top + window.pageYOffset - 24;
-                    window.scrollTo({ top, behavior: "smooth" });
-
+                
+                // Start end sequence
+                const endSequence = document.getElementById('endSequence');
+                const arenaImage = document.getElementById('arenaImage');
+                const stayTunedImage = document.getElementById('stayTunedImage');
+                const blackScreen = document.getElementById('blackScreen');
+                const logosContainer = document.getElementById('logosContainer');
+                
+                if (endSequence) {
+                  endSequence.setAttribute('aria-hidden', 'false');
+                  
+                  // Show Arena image
+                  animationBuffer.add(() => {
+                    if (arenaImage) {
+                      arenaImage.style.opacity = '1';
+                      arenaImage.style.transition = 'opacity 800ms ease';
+                    }
+                  }, 500);
+                  
+                  // Show Stay Tuned image after 3 seconds
+                  animationBuffer.add(() => {
+                    if (stayTunedImage) {
+                      stayTunedImage.style.opacity = '1';
+                      stayTunedImage.style.transition = 'opacity 800ms ease';
+                    }
+                  }, 3500);
+                  
+                  // Fade out Stay Tuned and show black screen after 3 more seconds
+                  animationBuffer.add(() => {
+                    if (stayTunedImage) {
+                      stayTunedImage.style.opacity = '0';
+                      stayTunedImage.style.transition = 'opacity 600ms ease';
+                    }
+                    if (arenaImage) {
+                      arenaImage.style.opacity = '0';
+                      arenaImage.style.transition = 'opacity 600ms ease';
+                    }
+                    if (blackScreen) {
+                      blackScreen.classList.add('active');
+                    }
+                  }, 6500);
+                  
+                  // Show logos and play background music at 30% volume
+                  animationBuffer.add(() => {
+                    if (logosContainer) {
+                      logosContainer.style.opacity = '1';
+                    }
+                    
+                    // Play audio at 30% volume
+                    if (audio) {
+                      audio.currentTime = 0;
+                      audio.volume = 0.3;
+                      audio.play().catch(() => {});
+                    }
+                  }, 7200);
+                  
+                  // After logos show for 5 seconds, fade everything to black
+                  animationBuffer.add(() => {
+                    endSequence.style.opacity = '0';
+                    endSequence.style.transition = 'opacity 1000ms ease';
+                    endSequence.style.pointerEvents = 'none';
+                  }, 12200);
+                  
+                  // After fade, reset and show details
+                  animationBuffer.add(() => {
+                    endSequence.setAttribute('aria-hidden', 'true');
+                    if (arenaImage) arenaImage.style.opacity = '0';
+                    if (stayTunedImage) stayTunedImage.style.opacity = '0';
+                    if (blackScreen) blackScreen.classList.remove('active');
+                    if (logosContainer) logosContainer.style.opacity = '0';
+                    
+                    // Show scroll arrow
+                    if (scrollArrow) {
+                      animationBuffer.add(() => scrollArrow.classList.add('show'), 200);
+                    }
+                    
+                    // Scroll to details
+                    const arrowVisibleDelay = 1200;
                     animationBuffer.add(() => {
-                      revealItems.forEach((el, i) => {
-                        animationBuffer.add(() => el.classList.add("visible"), i * 120);
-                      });
+                      if (details) {
+                        details.setAttribute("aria-hidden", "false");
+                        const top = details.getBoundingClientRect().top + window.pageYOffset - 24;
+                        window.scrollTo({ top, behavior: "smooth" });
 
-                      const qrCollection = document.getElementById('qrCollection');
-                      if (qrCollection) {
-                        qrCollection.setAttribute('aria-hidden', 'false');
-                        const cards = Array.from(qrCollection.querySelectorAll('.qr-card'));
-                        cards.forEach((card, idx) => {
-                          animationBuffer.add(() => card.classList.add('visible'), 600 + idx * 160);
-                        });
+                        animationBuffer.add(() => {
+                          revealItems.forEach((el, i) => {
+                            animationBuffer.add(() => el.classList.add("visible"), i * 120);
+                          });
+
+                          const qrCollection = document.getElementById('qrCollection');
+                          if (qrCollection) {
+                            qrCollection.setAttribute('aria-hidden', 'false');
+                            const cards = Array.from(qrCollection.querySelectorAll('.qr-card'));
+                            cards.forEach((card, idx) => {
+                              animationBuffer.add(() => card.classList.add('visible'), 600 + idx * 160);
+                            });
+                          }
+                        }, 700);
                       }
-                    }, 700);
-                  }
-                }, arrowVisibleDelay);
+                    }, arrowVisibleDelay);
+                  }, 13200);
+                }
               });
             }
           }, 2000);
